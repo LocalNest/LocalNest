@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# n8n credentials (keep templates only)
+n8n/credentials/*.json
+!n8n/credentials/*.template.json
+
+# Runtime data
+data/redis/*
+data/faiss/*
+!data/**/.gitkeep
+
+# Configuration with secrets
+config/*.secret.*
+config/.env
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Warp
+WARP.md
