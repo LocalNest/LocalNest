@@ -12,16 +12,16 @@
 - **Remote Access:** Easily integrate your favorite VPN, Meshnet, or local dashboard for control from anywhere.
 
 ## Architecture
-
-        +-------------------+         +-------------------+         +---------------------+
-        |                   |         |                   |         |                     |
-        |  Devices/Sensors  +-------> |   LocalNest AI    +-------> |    n8n Workflows    |
-        |  (Cameras, IoT,   | Events |   Assistant/API    |  Calls |   Orchestration &    |
-        |  SmartPlugs, etc) |        |                   |         |     Automation      |
-        +-------------------+        +-------------------+         +---------------------+
-                 |                            ^                               ^
-                 |                            |                               |
-                 +--------- Automation <-------+                    Event Triggers
+```
++---------------------+       +---------------------+       +----------------------+
+|   Devices/Sensors   | ----> |    LocalNest AI     | ----> |     n8n Workflows    |
+| (Cameras, IoT, etc) |       | Assistant / API     |       | Orchestration & Auto |
++---------------------+       +---------------------+       +----------------------+
+                                       ^                               ^
+                                       |                               |
+                                       +--------- Automation <---------+
+                                                   Event Triggers
+```
 
 - **n8n** triggers all workflows, orchestrates devices, and calls LocalNest for AI-powered decisions and event analysis.
 - **LocalNest AI Assistant** parses commands, analyzes camera/sensor feeds, and powers intelligent automations.
