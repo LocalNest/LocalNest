@@ -5,9 +5,13 @@ __pycache__/
 *.so
 .Python
 venv/
+localnest_env/
 env/
 ENV/
 .venv
+*.egg-info/
+dist/
+build/
 
 # n8n credentials (keep templates only)
 n8n/credentials/*.json
@@ -21,6 +25,9 @@ data/faiss/*
 # Configuration with secrets
 config/*.secret.*
 config/.env
+.env
+*.env.local
+*.env.production
 
 # Logs
 *.log
@@ -34,6 +41,15 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+
+# Docker
+*.pid
+docker-compose.override.yml
+.dockerignore.local
+
+# Shared directory (mounted in containers)
+shared/*
+!shared/.gitkeep
 
 # Warp
 WARP.md
