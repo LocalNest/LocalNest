@@ -1,0 +1,292 @@
+{
+  "name": "Self-Hosted AI Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "allowFileUploads": true,
+          "allowedFilesMimeTypes": "images/*"
+        }
+      },
+      "id": "e65a1306-b893-4d70-842f-8a8529c95911",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "position": [
+        -192,
+        -16
+      ],
+      "webhookId": "4d06a912-2920-489c-a33c-0e3ea0b66745",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={\n  \"prompt\": ,{{ $json.chatInput }}\n  \"images\": [ \"{{ $json.data}}\" ]\n}\n"
+      },
+      "id": "e7b16532-1db1-4e23-a078-1ea72aa93653",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "position": [
+        416,
+        208
+      ],
+      "typeVersion": 1.5,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": "gdisney/orca2-uncensored:latest",
+        "options": {}
+      },
+      "id": "ac6eef3e-32af-43b9-8f76-9a3d2b457fba",
+      "name": "Ollama Model",
+      "type": "@n8n/n8n-nodes-langchain.lmOllama",
+      "position": [
+        400,
+        480
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "ollamaApi": {
+          "id": "t9n8O1ulLRPT3dC0",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "caa6d737-50a8-426b-9d95-707aeb6abd99",
+              "name": "response.Response",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {
+          "ignoreConversionErrors": false
+        }
+      },
+      "id": "acf7c09c-2c8e-4c08-a731-f225d2fd35a1",
+      "name": "Structured Response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1488,
+        0
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "13c4058d-2d50-46b7-a5a6-c788828a1764",
+              "name": "text",
+              "type": "string",
+              "value": "=There was an error."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "396b1cbe-fc3f-44e4-bd17-084aa36c4149",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1376,
+        592
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "030dde79-3fcc-43d9-b308-cb8423e47a4e",
+              "name": "text",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ec050ba2-c3b8-4a6e-81d3-0c3f7fa94508",
+      "name": "JSON to Object",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1136,
+        0
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "llama3.2-vision:latest",
+          "mode": "list",
+          "cachedResultName": "llama3.2-vision:latest"
+        },
+        "text": "={{ $json.chatInput }}",
+        "binaryPropertyName": "data0",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.ollama",
+      "typeVersion": 1,
+      "position": [
+        432,
+        -112
+      ],
+      "id": "47ebcf3b-47f6-49d6-a3ce-3725294221a8",
+      "name": "Analyze image",
+      "credentials": {
+        "ollamaApi": {
+          "id": "t9n8O1ulLRPT3dC0",
+          "name": "Ollama account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "86f79ff0-3373-4215-bd59-a9231c5c3aab",
+              "leftValue": "={{ $json.files }}",
+              "rightValue": "null",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        48,
+        80
+      ],
+      "id": "6f66ff07-d25b-4832-b1d5-4d482f4c2abe",
+      "name": "If"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Ollama Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON to Object": {
+      "main": [
+        [
+          {
+            "node": "Structured Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "JSON to Object",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "JSON to Object",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bf8c6ad5-686b-4afa-a51d-62301250f74d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c6567ed30cb5a8341e7a656445d15254866b4317210b1fad5b0785d9f81fa877"
+  },
+  "id": "XCMgkj4O1Y8wJqfB",
+  "tags": []
+}

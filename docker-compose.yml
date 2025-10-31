@@ -45,7 +45,7 @@ x-init-ollama: &init-ollama
     - OLLAMA_HOST=ollama:11434
   command:
     - "-c"
-    - "sleep 3; ollama pull codellama:7b-code && ollama pull llama3:8b"
+    - "sleep 3; ollama pull codellama:7b-code && ollama pull llama3:8b && ollama pull gdisney/orca2-uncensored && ollama pull llama3.2-vision   "
 
 services:
   llm-service:
